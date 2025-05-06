@@ -23,7 +23,7 @@ interface Transaction {
   total: number;
 }
 
-import { use } from 'react';
+// Removed: import { use } from 'react';
 
 export default function TransactionDetail({ params }: { params: { transactionId: string } }) {
   const [visibleColumns, setVisibleColumns] = useState({
