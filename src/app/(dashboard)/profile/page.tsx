@@ -1,12 +1,15 @@
 'use client';
 
+import type { User } from 'firebase/auth';
+
+const [user, setUser] = useState<User | null>(null);
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, updateProfile, signOut } from 'firebase/auth';
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(null);
+ 
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const router = useRouter();
