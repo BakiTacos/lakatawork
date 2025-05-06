@@ -149,7 +149,7 @@ export default function Purchase() {
         type: 'purchase',
         date: new Date(),
         items: selectedProducts,
-        total: selectedProducts.reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0)
+        total: selectedProducts.reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0).toFixed(2)
       });
 
       setSavedTransactionId(docRef.id);
