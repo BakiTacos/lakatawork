@@ -14,7 +14,8 @@ interface InventoryItem {
   supplier: string;
 }
 
-export default function Inventory({ params }: { params: { inventories: string } }) {
+type InventoryPageProps = { params: { inventories: string } };
+export default function Inventory({ params }: InventoryPageProps) {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
