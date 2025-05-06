@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
@@ -18,7 +18,7 @@ export default function Inventory({ params }: { params: { inventories: string } 
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
-  const [currentPage, setCurrentPage] = useState(parseInt(use(params).inventories) || 1);
+  const [currentPage, setCurrentPage] = useState(parseInt(params.inventories) || 1);
   const itemsPerPage = 20;
   const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
   
