@@ -23,7 +23,7 @@ export default function Stocks({ params }: { params: { product: string } }) {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [selectedSupplier, setSelectedSupplier] = useState('');
-  const [currentPage, setCurrentPage] = useState(parseInt(use(params).product) || 1);
+  const [currentPage, setCurrentPage] = useState(parseInt(params.product) || 1);
   const itemsPerPage = 24;
   const filteredProducts = products.filter(product => {
     const matchesSearch = (
