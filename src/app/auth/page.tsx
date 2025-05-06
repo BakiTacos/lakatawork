@@ -17,7 +17,7 @@ export default function AuthPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard'); // Redirect to dashboard after successful login
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
       }
@@ -29,7 +29,7 @@ export default function AuthPage() {
     try {
       await signInWithPopup(auth, provider);
       router.push('/');
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
       }

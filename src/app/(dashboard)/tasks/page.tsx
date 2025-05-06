@@ -17,7 +17,7 @@ export default function TasksPage() {
     if (user) {
       loadCategories();
     }
-  }, [user, loadCategories]);
+  }, [user]);
 
   const loadCategories = async () => {
     try {
@@ -111,7 +111,7 @@ export default function TasksPage() {
       });
 
       setCategories(categories.filter(cat => cat !== categoryName));
-      const { [categoryName]: removed, ...remainingTasks } = tasks;
+      const { [categoryName]: _, ...remainingTasks } = tasks;
       setTasks(remainingTasks);
     } catch (error) {
       console.error('Error deleting category:', error);

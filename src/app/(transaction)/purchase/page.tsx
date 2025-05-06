@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 interface Product {
@@ -143,14 +143,13 @@ export default function Purchase() {
 
       setShowSaveConfirmation(false);
 
-      const totalPrice = selectedProducts.reduce((sum, item) => sum + item.buyingPrice * item.quantity, 0);
       const transactionRef = collection(db, 'transactions');
       const docRef = await addDoc(transactionRef, {
         ownerId: user.uid,
         type: 'purchase',
         date: new Date(),
         items: selectedProducts,
-        total: totalPrice
+        total: selectedProducts.reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0)
       });
 
       setSavedTransactionId(docRef.id);
@@ -227,16 +226,13 @@ export default function Purchase() {
                         <td className="px-4 py-2">{item.supplierName}</td>
                         <td className="px-4 py-2 text-right">Rp {item.buyingPrice.toLocaleString()}</td>
                         <td className="px-4 py-2 text-right">
-                        <input
-                        type="number"
-                        value={item.quantity ?? 1}
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value);
-                          if (!isNaN(value)) updateQuantity(item.productId, value);
-                        }}
-                        className="w-20 px-2 py-1 text-right border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                        min="1"
-                      />
+                          <input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value) || 0)}
+                            className="w-20 px-2 py-1 text-right border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            min="1"
+                          />
                         </td>
                         <td className="px-4 py-2 text-right">Rp {(item.buyingPrice * item.quantity).toLocaleString()}</td>
                         <td className="px-4 py-2 text-center">
@@ -301,16 +297,13 @@ export default function Purchase() {
                         <td className="px-4 py-2">{item.supplierName}</td>
                         <td className="px-4 py-2 text-right">Rp {item.buyingPrice.toLocaleString()}</td>
                         <td className="px-4 py-2 text-right">
-                        <input
-                          type="number"
-                          value={item.quantity ?? 1}
-                          onChange={(e) => {
-                            const value = parseInt(e.target.value);
-                            if (!isNaN(value)) updateQuantity(item.productId, value);
-                          }}
-                          className="w-20 px-2 py-1 text-right border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                          min="1"
-                        />
+                          <input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value) || 0)}
+                            className="w-20 px-2 py-1 text-right border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            min="1"
+                          />
                         </td>
                         <td className="px-4 py-2 text-right">Rp {(item.buyingPrice * item.quantity).toLocaleString()}</td>
                         <td className="px-4 py-2 text-center">

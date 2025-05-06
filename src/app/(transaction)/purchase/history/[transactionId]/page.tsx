@@ -34,7 +34,7 @@ export default function TransactionDetail({ params }: { params: { transactionId:
     supplier: true,
     subtotal: true
   });
-  const { transactionId } = params;
+  const { transactionId } = use(params);
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const router = useRouter();
 
