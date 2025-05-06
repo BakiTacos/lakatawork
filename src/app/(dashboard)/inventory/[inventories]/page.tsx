@@ -1,7 +1,11 @@
 import { Suspense } from 'react';
 import InventoryClient from './inventory-client';
 
-export default async function Inventory({ params }: { params: { inventories: string } }) {
+type Props = {
+  params: { inventories: string }
+}
+
+export default function Inventory({ params }: Props) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <InventoryClient initialPage={parseInt(params.inventories) || 1} />
