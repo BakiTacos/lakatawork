@@ -13,9 +13,9 @@ interface Supplier {
   contact: string;
 }
 
-export default function Suppliers() {
+export default function Suppliers({ params }: { params: { supplier: string } }) {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(params.supplier) || 1);
   const itemsPerPage = 20;
   const totalPages = Math.ceil(suppliers.length / itemsPerPage);
   
