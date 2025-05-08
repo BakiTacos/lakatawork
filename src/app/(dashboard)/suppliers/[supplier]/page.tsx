@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useSearchParams } from 'next/navigation';
 
 interface Supplier {
   id: string;
@@ -13,9 +14,11 @@ interface Supplier {
   contact: string;
 }
 
-export default function Suppliers({ params }: { params: { supplier: string } }) {
+export default function Suppliers() {
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get('page');
+  const [currentPage, setCurrentPage] = useState(Number(pageParam) || 1);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
-  const [currentPage, setCurrentPage] = useState(parseInt(params.supplier) || 1);
   const itemsPerPage = 20;
   const totalPages = Math.ceil(suppliers.length / itemsPerPage);
   
