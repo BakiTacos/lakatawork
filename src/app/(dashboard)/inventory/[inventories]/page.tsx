@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useSearchParams } from 'next/navigation';
 
 interface InventoryItem {
   id: string;
@@ -16,8 +15,7 @@ interface InventoryItem {
 }
 
 export default function Inventory() {
-  const params = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(parseInt(params.get('page') || '1'));
+  const [currentPage, setCurrentPage] = useState(1);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
@@ -147,11 +145,7 @@ export default function Inventory() {
       {totalPages > 1 && (
         <div className="mt-6 flex justify-center gap-2">
           <button
-            onClick={() => {
-              const newPage = Math.max(currentPage - 1, 1);
-              setCurrentPage(newPage);
-              router.push(`/inventory/${newPage}`);
-            }}
+            onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1}
             className="px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded-md disabled:opacity-50 bg-background text-foreground hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150"
           >
@@ -161,11 +155,7 @@ export default function Inventory() {
             Page {currentPage} of {totalPages}
           </span>
           <button
-            onClick={() => {
-              const newPage = Math.min(currentPage + 1, totalPages);
-              setCurrentPage(newPage);
-              router.push(`/inventory/${newPage}`);
-            }}
+            onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
             disabled={currentPage === totalPages}
             className="px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded-md disabled:opacity-50 bg-background text-foreground hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150"
           >
