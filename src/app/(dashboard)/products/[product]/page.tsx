@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useSearchParams } from 'next/navigation';
 
 interface Product {
   id: string;
@@ -18,9 +17,7 @@ interface Product {
 }
 
 export default function Stocks() {
-  const searchParams = useSearchParams();
-  const pageParam = searchParams.get('page');
-  const [currentPage, setCurrentPage] = useState(Number(pageParam) || 1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -382,11 +379,7 @@ export default function Stocks() {
       {totalPages > 1 && (
         <div className="mt-6 flex justify-center gap-2">
           <button
-            onClick={() => {
-              const newPage = Math.max(currentPage - 1, 1);
-              setCurrentPage(newPage);
-              router.push(`/products/${newPage}`);
-            }}
+            onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1}
             className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
           >
@@ -396,11 +389,7 @@ export default function Stocks() {
             Page {currentPage} of {totalPages}
           </span>
           <button
-            onClick={() => {
-              const newPage = Math.min(currentPage + 1, totalPages);
-              setCurrentPage(newPage);
-              router.push(`/products/${newPage}`);
-            }}
+            onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
             disabled={currentPage === totalPages}
             className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
           >
