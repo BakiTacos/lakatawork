@@ -17,7 +17,7 @@ export default function AuthPage() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard'); // Redirect to dashboard after successful login
+      router.push('/'); // Redirect to dashboard after successful login
     } catch (error) {
       if (error instanceof FirebaseError) {
         // Firebase auth error codes for wrong password/email
