@@ -109,54 +109,21 @@ export default function Inventory() {
         />
       </div>
 
-      <div className="overflow-x-auto bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12]">
-        {totalPages > 1 && (
-          <div className="mb-4 flex justify-center gap-2">
-            <button
-              onClick={() => {
-                const newPage = Math.max(currentPage - 1, 1);
-                setCurrentPage(newPage);
-                router.push(`/inventory/${newPage}`);
-              }}
-              disabled={currentPage === 1}
-              className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span className="px-3 py-1">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => {
-                const newPage = Math.min(currentPage + 1, totalPages);
-                setCurrentPage(newPage);
-                router.push(`/inventory/${newPage}`);
-              }}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        )}
-        <table className="min-w-full divide-y divide-black/[.08] dark:divide-white/[.12]">
-          <thead className="bg-background">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Product ID</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Product Name</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Stock Quantity</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Supplier</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-black/[.08] dark:divide-white/[.12]">
-            {getCurrentPageItems().map((item) => (
-              <tr key={item.id} className="hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150 ease-in-out">
-                <td className="px-6 py-4 whitespace-nowrap">{item.productId}</td>
-                <td className="px-6 py-4 whitespace-nowrap" title={item.productName}>
-                  {item.productName.split(' ').slice(0, 4).join(' ')}
-                  {item.productName.split(' ').length > 4 ? '...' : ''}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap font-medium text-emerald-600">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {getCurrentPageItems().map((item) => (
+          <div key={item.id} className="bg-background border border-black/[.08] dark:border-white/[.12] rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4">
+            <div className="flex flex-col h-full">
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-foreground mb-1 truncate" title={item.productName}>
+                  {item.productName}
+                </h3>
+                <p className="text-sm text-foreground/60 mb-2">ID: {item.productId}</p>
+                <p className="text-sm text-foreground/60">Supplier: {item.supplier}</p>
+              </div>
+              
+              <div className="mt-auto">
+                <div className="flex items-center justify-between bg-black/[.02] dark:bg-white/[.02] rounded-lg p-3">
+                  <label className="text-sm font-medium text-foreground">Stock:</label>
                   <div className="flex items-center space-x-2">
                     <input
                       type="number"
@@ -165,18 +132,47 @@ export default function Inventory() {
                         const newValue = Math.max(0, parseInt(e.target.value) || 0);
                         updateStock(item.id, newValue);
                       }}
-                      className="w-20 px-2 py-1 border rounded text-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      className="w-20 px-2 py-1 border border-black/[.08] dark:border-white/[.12] rounded text-center bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       min="0"
                     />
-                    <span className="text-gray-500">units</span>
+                    <span className="text-sm text-foreground/60">units</span>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">{item.supplier}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2">
+          <button
+            onClick={() => {
+              const newPage = Math.max(currentPage - 1, 1);
+              setCurrentPage(newPage);
+              router.push(`/inventory/${newPage}`);
+            }}
+            disabled={currentPage === 1}
+            className="px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded-md disabled:opacity-50 bg-background text-foreground hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 text-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => {
+              const newPage = Math.min(currentPage + 1, totalPages);
+              setCurrentPage(newPage);
+              router.push(`/inventory/${newPage}`);
+            }}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded-md disabled:opacity-50 bg-background text-foreground hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
