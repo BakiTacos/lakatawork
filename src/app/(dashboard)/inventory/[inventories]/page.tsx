@@ -13,17 +13,12 @@ interface InventoryItem {
   stockQuantity: number;
   supplier: string;
 }
-import { SearchParams } from 'next/navigation';
 
-type PageProps = {
-  searchParams?: SearchParams
-}
-
-export default function Page({ searchParams }: PageProps) {
+export default function Inventory({ params }: { params: { inventories: string } }) {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.page || '1'));
+  const [currentPage, setCurrentPage] = useState(parseInt(params.inventories) || 1);
   const itemsPerPage = 20;
   const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
   
@@ -119,7 +114,7 @@ export default function Page({ searchParams }: PageProps) {
               onClick={() => {
                 const newPage = Math.max(currentPage - 1, 1);
                 setCurrentPage(newPage);
-                router.push(`/inventory?page=${newPage}`);
+                router.push(`/inventory/${newPage}`);
               }}
               disabled={currentPage === 1}
               className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
@@ -133,7 +128,7 @@ export default function Page({ searchParams }: PageProps) {
               onClick={() => {
                 const newPage = Math.min(currentPage + 1, totalPages);
                 setCurrentPage(newPage);
-                router.push(`/inventory?page=${newPage}`);
+                router.push(`/inventory/${newPage}`);
               }}
               disabled={currentPage === totalPages}
               className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
