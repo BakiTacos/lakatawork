@@ -14,11 +14,11 @@ interface InventoryItem {
   supplier: string;
 }
 
-export default function Inventory({ params }: { params: { inventories: string } }) {
+export default function Inventory({ searchParams }: { searchParams: { page?: string } }) {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
-  const [currentPage, setCurrentPage] = useState(parseInt(params.inventories) || 1);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.page || '1'));
   const itemsPerPage = 20;
   const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
   
