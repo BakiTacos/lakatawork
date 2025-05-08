@@ -114,7 +114,7 @@ export default function Inventory({ searchParams }: { searchParams: Record<strin
               onClick={() => {
                 const newPage = Math.max(currentPage - 1, 1);
                 setCurrentPage(newPage);
-                router.push(`/inventory/${newPage}`);
+                router.push(`/inventory?page=${newPage}`);
               }}
               disabled={currentPage === 1}
               className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
@@ -128,7 +128,7 @@ export default function Inventory({ searchParams }: { searchParams: Record<strin
               onClick={() => {
                 const newPage = Math.min(currentPage + 1, totalPages);
                 setCurrentPage(newPage);
-                router.push(`/inventory/${newPage}`);
+                router.push(`/inventory?page=${newPage}`);
               }}
               disabled={currentPage === totalPages}
               className="px-3 py-1 border border-black/[.08] dark:border-white/[.12] rounded disabled:opacity-50"
