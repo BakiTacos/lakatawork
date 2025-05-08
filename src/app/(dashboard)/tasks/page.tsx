@@ -17,7 +17,7 @@ export default function TasksPage() {
     if (user) {
       loadCategories();
     }
-  }, [user, loadCategories]);
+  }, [user]);
 
   const loadCategories = async () => {
     try {
