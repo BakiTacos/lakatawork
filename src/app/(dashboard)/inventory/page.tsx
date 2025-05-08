@@ -13,8 +13,10 @@ interface InventoryItem {
   stockQuantity: number;
   supplier: string;
 }
+import { SearchParams } from 'next/navigation';
+
 type PageProps = {
-  searchParams?: Record<string, string | string[]>
+  searchParams?: SearchParams
 }
 
 export default function Page({ searchParams }: PageProps) {
