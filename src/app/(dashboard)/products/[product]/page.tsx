@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useSearchParams } from 'next/navigation';
 
 interface Product {
   id: string;
@@ -16,14 +17,16 @@ interface Product {
   supplier: string;
 }
 
-export default function Stocks({ params }: { params: { product: string } }) {
+export default function Stocks() {
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get('page');
+  const [currentPage, setCurrentPage] = useState(Number(pageParam) || 1);
   const [products, setProducts] = useState<Product[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [selectedSupplier, setSelectedSupplier] = useState('');
-  const [currentPage, setCurrentPage] = useState(parseInt(params.product) || 1);
   const itemsPerPage = 24;
   const filteredProducts = products.filter(product => {
     const matchesSearch = (
