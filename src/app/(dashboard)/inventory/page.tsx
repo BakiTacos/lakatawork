@@ -14,7 +14,7 @@ interface InventoryItem {
   supplier: string;
 }
 
-export default function Inventory({ searchParams }: { searchParams: { page?: string } }) {
+export default function Inventory({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
