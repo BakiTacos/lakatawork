@@ -107,22 +107,22 @@ export default function Inventory() {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {getCurrentPageItems().map((item) => (
-          <div key={item.id} className="bg-background border border-black/[.08] dark:border-white/[.12] rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4">
+          <div key={item.id} className="bg-background border border-black/[.08] dark:border-white/[.12] rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-3 sm:p-4">
             <div className="flex flex-col h-full">
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold text-foreground mb-1 truncate" title={item.productName}>
+              <div className="mb-3 sm:mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 truncate" title={item.productName}>
                   {item.productName}
                 </h3>
-                <p className="text-sm text-foreground/60 mb-2">ID: {item.productId}</p>
-                <p className="text-sm text-foreground/60">Supplier: {item.supplier}</p>
+                <p className="text-xs sm:text-sm text-foreground/60 mb-1 sm:mb-2">ID: {item.productId}</p>
+                <p className="text-xs sm:text-sm text-foreground/60">Supplier: {item.supplier}</p>
               </div>
               
               <div className="mt-auto">
-                <div className="flex items-center justify-between bg-black/[.02] dark:bg-white/[.02] rounded-lg p-3">
-                  <label className="text-sm font-medium text-foreground">Stock:</label>
-                  <div className="flex items-center space-x-2">
+                <div className="flex items-center justify-between bg-black/[.02] dark:bg-white/[.02] rounded-lg p-2 sm:p-3">
+                  <label className="text-xs sm:text-sm font-medium text-foreground">Stock:</label>
+                  <div className="flex items-center space-x-1 sm:space-x-2">
                     <input
                       type="number"
                       value={item.stockQuantity?.toString() || '0'}
@@ -130,10 +130,10 @@ export default function Inventory() {
                         const newValue = Math.max(0, parseInt(e.target.value) || 0);
                         updateStock(item.id, newValue);
                       }}
-                      className="w-20 px-2 py-1 border border-black/[.08] dark:border-white/[.12] rounded text-center bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      className="w-16 sm:w-20 px-1 sm:px-2 py-1 border border-black/[.08] dark:border-white/[.12] rounded text-center bg-background text-foreground text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       min="0"
                     />
-                    <span className="text-sm text-foreground/60">units</span>
+                    <span className="text-xs sm:text-sm text-foreground/60">units</span>
                   </div>
                 </div>
               </div>

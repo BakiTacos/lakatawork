@@ -402,9 +402,6 @@ export default function Purchase() {
           </div>
         )}
 
-        {
-
-
         <div className="bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12]">
           <h2 className="text-lg font-semibold mb-4">Available Products</h2>
           {totalPages > 1 && (
@@ -428,44 +425,30 @@ export default function Purchase() {
               </button>
             </div>
           )}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-black/[.08] dark:divide-white/[.12]">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-left">Product ID</th>
-                  <th className="px-4 py-2 text-left">Name</th>
-                  <th className="px-4 py-2 text-left">Price</th>
-                  <th className="px-4 py-2 text-left">Supplier</th>
-                  <th className="px-4 py-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getCurrentPageItems().map((product) => (
-                  <tr key={product.id} className="hover:bg-black/[.02] dark:hover:bg-white/[.02]">
-                    <td className="px-4 py-2">{product.productId}</td>
-                    <td className="px-4 py-2" title={product.productName}>
-                      {product.productName.split(' ').slice(0, 4).join(' ')}
-                      {product.productName.split(' ').length > 4 ? '...' : ''}
-                    </td>
-                    <td className="px-4 py-2">Rp {product.buyingPrice.toLocaleString()}</td>
-                    <td className="px-4 py-2">{product.supplier}</td>
-                    <td className="px-4 py-2 text-center">
-                      <button
-                        onClick={() => showAddConfirmation(product)}
-                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                      >
-                        Add
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+            {getCurrentPageItems().map((product) => (
+              <div key={product.id} className="bg-background rounded-lg border border-black/[.08] dark:border-white/[.12] p-3 sm:p-4 hover:shadow-lg transition-shadow duration-200">
+                <div className="mb-3 sm:mb-4">
+                  <h3 className="text-base sm:text-lg font-medium text-foreground truncate" title={product.productName}>
+                    {product.productName}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-foreground/70">{product.productId}</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-foreground/70">{product.supplier}</p>
+                  <p className="text-base font-medium text-foreground">Rp {product.buyingPrice.toLocaleString()}</p>
+                  <button
+                    onClick={() => showAddConfirmation(product)}
+                    className="w-full px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200"
+                  >
+                    Add to Transaction
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-
         </div>
-}
+        </div>
       </div>
-    </div>
   );
 }
