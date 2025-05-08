@@ -182,42 +182,36 @@ export default function Suppliers() {
       </form>
 
       <div className="overflow-x-auto bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12]">
-        <table className="min-w-full divide-y divide-black/[.08] dark:divide-white/[.12]">
-          <caption className="sr-only">Supplier Management Table</caption>
-          <thead className="bg-background sticky top-0">
-            <tr className="border-b border-black/[.08] dark:border-white/[.12]">
-              <th className="px-6 py-4 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Supplier ID</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Name</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Contact</th>
-
-              <th className="px-6 py-4 text-left text-xs font-semibold text-foreground uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-black/[.08] dark:divide-white/[.12]">
-            {getCurrentPageItems().map((supplier) => (
-              <tr key={supplier.id} className="hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150 ease-in-out">
-                <td className="px-6 py-4 whitespace-nowrap text-foreground">{supplier.supplierId}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-foreground">{supplier.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-foreground">{supplier.contact}</td>
-
-                <td className="px-6 py-4 whitespace-nowrap space-x-2">
+        <h2 className="text-lg font-semibold mb-4">Available Suppliers</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+          {getCurrentPageItems().map((supplier) => (
+            <div key={supplier.id} className="bg-background rounded-lg border border-black/[.08] dark:border-white/[.12] p-3 sm:p-4 hover:shadow-lg transition-shadow duration-200">
+              <div className="mb-3 sm:mb-4">
+                <h3 className="text-base sm:text-lg font-medium text-foreground truncate" title={supplier.name}>
+                  {supplier.name}
+                </h3>
+                <p className="text-xs sm:text-sm text-foreground/70">{supplier.supplierId}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm text-foreground/70">{supplier.contact}</p>
+                <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => handleEdit(supplier)}
-                    className="inline-flex items-center px-3 py-1.5 border border-black/[.08] dark:border-white/[.12] text-sm font-medium rounded-md text-foreground bg-background hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150"
+                    className="flex-1 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(supplier.id)}
-                    className="inline-flex items-center px-3 py-1.5 border border-black/[.08] dark:border-white/[.12] text-sm font-medium rounded-md text-foreground bg-background hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150"
+                    className="flex-1 px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200"
                   >
                     Delete
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
         {totalPages > 1 && (
           <div className="mt-4 flex justify-center gap-2">
             <button
