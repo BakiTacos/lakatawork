@@ -13,8 +13,11 @@ interface InventoryItem {
   stockQuantity: number;
   supplier: string;
 }
+type PageProps = {
+  searchParams?: Record<string, string | string[]>
+}
 
-export default function Inventory({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
+export default function Page({ searchParams }: PageProps) {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
