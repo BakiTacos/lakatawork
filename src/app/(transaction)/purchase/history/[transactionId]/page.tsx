@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useParams } from 'next/navigation';
 
 interface TransactionItem {
   productId: string;
@@ -25,7 +26,9 @@ interface Transaction {
 
 // Removed: import { use } from 'react';
 
-export default function TransactionDetail({ params }: { params: { transactionId: string } }) {
+export default function TransactionDetail() {
+  const params = useParams();
+  const transactionId = params.transactionId as string;
   const [visibleColumns, setVisibleColumns] = useState({
     productId: true,
     name: true,
@@ -34,7 +37,6 @@ export default function TransactionDetail({ params }: { params: { transactionId:
     supplier: true,
     subtotal: true
   });
-  const { transactionId } = params;
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const router = useRouter();
 
