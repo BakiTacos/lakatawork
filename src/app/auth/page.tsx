@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { app as firebaseApp } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { FirebaseError } from 'firebase/app';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');
@@ -18,8 +19,21 @@ export default function AuthPage() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard'); // Redirect to dashboard after successful login
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+      if (error instanceof FirebaseError) {
+        // Firebase auth error codes for wrong password/email
+        switch (error.code) {
+          case 'auth/wrong-password':
+            setError('Incorrect password. Please try again.');
+            break;
+          case 'auth/user-not-found':
+            setError('No account found with this email. Please check your email or sign up.');
+            break;
+          case 'auth/invalid-email':
+            setError('Invalid email format. Please enter a valid email address.');
+            break;
+          default:
+            setError(error.message);
+        }
       }
     }
   };
