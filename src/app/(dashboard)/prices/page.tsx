@@ -167,7 +167,7 @@ export default function Prices() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {getCurrentPageItems().map((product) => (
           <div key={product.id} className="bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12] hover:shadow-xl transition-shadow duration-200">
             <div className="mb-3">
