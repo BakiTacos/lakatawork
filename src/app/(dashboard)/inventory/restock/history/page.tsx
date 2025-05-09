@@ -29,6 +29,9 @@ export default function RestockHistory() {
   const [loading, setLoading] = useState(true);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [currentPage, setCurrentPage] = useState(1);
+  const [dateRange, setDateRange] = useState('all');
+  const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
+  const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -64,10 +67,40 @@ export default function RestockHistory() {
     fetchTransactions();
   }, [user]);
 
-  const totalPages = Math.ceil(transactions.length / itemsPerPage);
+  const filterTransactionsByDate = (transactions: Transaction[]) => {
+    const monthsAgo = (months: number) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - months);
+      return date;
+    };
+
+    switch (dateRange) {
+      case '3months':
+        return transactions.filter(t => t.date.toDate() >= monthsAgo(3));
+      case '6months':
+        return transactions.filter(t => t.date.toDate() >= monthsAgo(6));
+      case '9months':
+        return transactions.filter(t => t.date.toDate() >= monthsAgo(9));
+      case '12months':
+        return transactions.filter(t => t.date.toDate() >= monthsAgo(12));
+      case 'custom':
+        if (customStartDate && customEndDate) {
+          return transactions.filter(t => {
+            const date = t.date.toDate();
+            return date >= customStartDate && date <= customEndDate;
+          });
+        }
+        return transactions;
+      default:
+        return transactions;
+    }
+  };
+
+  const filteredTransactions = filterTransactionsByDate(transactions);
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentTransactions = transactions.slice(startIndex, endIndex);
+  const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -105,17 +138,60 @@ export default function RestockHistory() {
           </button>
           <h1 className="text-2xl font-bold">Restock History</h1>
         </div>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-foreground/60">Show:</label>
-          <select
-            className="bg-background border border-black/[.08] dark:border-white/[.12] rounded px-2 py-1 text-sm"
-            value={itemsPerPage}
-            onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-          >
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-foreground/60">Date Range:</label>
+            <select
+              className="bg-background border border-black/[.08] dark:border-white/[.12] rounded px-2 py-1 text-sm"
+              value={dateRange}
+              onChange={(e) => {
+                setDateRange(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="all">All Time</option>
+              <option value="3months">Last 3 Months</option>
+              <option value="6months">Last 6 Months</option>
+              <option value="9months">Last 9 Months</option>
+              <option value="12months">Last 12 Months</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          {dateRange === 'custom' && (
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                className="bg-background border border-black/[.08] dark:border-white/[.12] rounded px-2 py-1 text-sm"
+                value={customStartDate?.toISOString().split('T')[0] || ''}
+                onChange={(e) => {
+                  setCustomStartDate(e.target.value ? new Date(e.target.value) : null);
+                  setCurrentPage(1);
+                }}
+              />
+              <span className="text-sm text-foreground/60">to</span>
+              <input
+                type="date"
+                className="bg-background border border-black/[.08] dark:border-white/[.12] rounded px-2 py-1 text-sm"
+                value={customEndDate?.toISOString().split('T')[0] || ''}
+                onChange={(e) => {
+                  setCustomEndDate(e.target.value ? new Date(e.target.value) : null);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-foreground/60">Show:</label>
+            <select
+              className="bg-background border border-black/[.08] dark:border-white/[.12] rounded px-2 py-1 text-sm"
+              value={itemsPerPage}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+            >
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
         </div>
       </div>
       
