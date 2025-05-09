@@ -12,7 +12,7 @@ export default function Home() {
     {
       title: "Inventory",
       icon: "/warehouse.svg",
-      href: "/inventory/1",
+      href: "/inventory/inventories",
       description: "Manage Products Stocks"
     },
     {
