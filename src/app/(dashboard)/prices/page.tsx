@@ -178,40 +178,40 @@ export default function Prices() {
               <p className="text-[10px] sm:text-xs text-foreground/60">Supplier: {product.supplier}</p>
             </div>
             
-            <div className="space-y-1.5 mt-3">
+            <div className="space-y-1 mt-2 sm:mt-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-foreground/60">Buying Price:</span>
-                <span className="text-sm font-medium">Rp {product.buyingPrice.toLocaleString()}</span>
+                <span className="text-[10px] sm:text-xs text-foreground/60">Buying Price:</span>
+                <span className="text-xs sm:text-sm font-medium">Rp {product.buyingPrice.toLocaleString()}</span>
               </div>
               {selectedMarkups.map(markup => {
                 const recommendedPrice = calculateRecommendedPrice(product.buyingPrice, markup);
                 const estimatedProfit = calculateProfit(recommendedPrice, product.buyingPrice);
                 return (
-                  <div key={markup} className="space-y-1 pt-2 border-t border-black/[.08] dark:border-white/[.12]">
+                  <div key={markup} className="space-y-0.5 sm:space-y-1 pt-1.5 sm:pt-2 border-t border-black/[.08] dark:border-white/[.12]">
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm text-foreground/60">{markup}% Markup:</span>
+                      <div className="flex items-center gap-0.5 sm:gap-1">
+                        <span className="text-[10px] sm:text-xs text-foreground/60">{markup}% Markup:</span>
                         <div className="relative group">
-                          <Info className="w-4 h-4 text-foreground/40" />
-                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black/90 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+                          <Info className="w-3 h-3 text-foreground/40" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1.5 px-2 py-1.5 bg-black/90 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
                             Base Price = Buying Price + 13% Admin<br />
                             Final Price = Base Price + {markup}% Markup
                           </div>
                         </div>
                       </div>
-                      <span className="font-medium">Rp {recommendedPrice.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                      <span className="text-xs sm:text-sm font-medium">Rp {recommendedPrice.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm text-foreground/60">Est. Profit:</span>
+                      <div className="flex items-center gap-0.5 sm:gap-1">
+                        <span className="text-[10px] sm:text-xs text-foreground/60">Est. Profit:</span>
                         <div className="relative group">
-                          <Info className="w-4 h-4 text-foreground/40" />
-                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black/90 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+                          <Info className="w-3 h-3 text-foreground/40" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1.5 px-2 py-1.5 bg-black/90 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
                             Profit = Final Price - Buying Price - Admin (13%) - Packaging (4%)
                           </div>
                         </div>
                       </div>
-                      <span className="font-medium text-green-600 dark:text-green-400">
+                      <span className="text-xs sm:text-sm font-medium text-green-600 dark:text-green-400">
                         Rp {estimatedProfit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                       </span>
                     </div>
