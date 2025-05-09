@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { Info } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -355,7 +356,15 @@ export default function Stocks() {
                 <span className="font-medium text-green-600">Rp {product.sellingPrice.toLocaleString('id-ID')}</span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-foreground/60">Profit:</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-foreground/60">Profit:</span>
+                  <div className="relative group">
+                    <Info className="w-3 h-3 text-foreground/40" />
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black/90 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                      Profit = Selling Price - Buying Price - Admin Fee (13%) - Packaging (4%)
+                    </div>
+                  </div>
+                </div>
                 <span className="font-medium text-emerald-600">Rp {calculateProfit(product.sellingPrice, product.buyingPrice).toLocaleString('id-ID')}</span>
               </div>
               <div className="pt-2 flex justify-between gap-1">
