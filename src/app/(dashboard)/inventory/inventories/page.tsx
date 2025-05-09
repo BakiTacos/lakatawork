@@ -131,16 +131,7 @@ export default function Inventory() {
                 <div className="flex items-center justify-between bg-black/[.02] dark:bg-white/[.02] rounded-lg p-2 sm:p-3">
                   <label className="text-xs sm:text-sm font-medium text-foreground">Stock:</label>
                   <div className="flex items-center space-x-1 sm:space-x-2">
-                    <input
-                      type="number"
-                      value={item.stockQuantity?.toString() || '0'}
-                      onChange={(e) => {
-                        const newValue = Math.max(0, parseInt(e.target.value) || 0);
-                        updateStock(item.id, newValue);
-                      }}
-                      className="w-16 sm:w-20 px-1 sm:px-2 py-1 border border-black/[.08] dark:border-white/[.12] rounded text-center bg-background text-foreground text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                      min="0"
-                    />
+                    <span className="text-sm font-medium">{item.stockQuantity || 0}</span>
                     <span className="text-xs sm:text-sm text-foreground/60">units</span>
                   </div>
                 </div>
