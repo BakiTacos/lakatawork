@@ -192,15 +192,23 @@ export default function Restock() {
     <div className="p-6 bg-background min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-foreground">Restock Products</h1>
-        <button
-          onClick={() => router.push('/inventory/inventories')}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Back to Inventory
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => router.push('/inventory/restock/history')}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            View History
+          </button>
+          <button
+            onClick={() => router.push('/inventory/inventories')}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Back to Inventory
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <div className="bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12]">
           <div className="mb-4">
             <input
@@ -212,21 +220,25 @@ export default function Restock() {
             />
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-1 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {getCurrentPageItems().map((product) => (
-              <div key={product.id} className="bg-background border border-black/[.08] dark:border-white/[.12] rounded-lg p-4 flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-foreground">{product.productName}</h3>
-                  <p className="text-sm text-foreground/60">ID: {product.productId}</p>
-                  <p className="text-sm text-foreground/60">Current Stock: {product.stockQuantity}</p>
-                  <p className="text-sm text-foreground/60">Supplier: {product.supplier}</p>
+              <div key={product.id} className="bg-background border border-black/[.08] dark:border-white/[.12] rounded-lg p-4">
+                <div className="flex flex-col h-full">
+                  <div className="mb-4">
+                    <h3 className="font-semibold text-foreground mb-2">{product.productName}</h3>
+                    <p className="text-sm text-foreground/60">ID: {product.productId}</p>
+                    <p className="text-sm text-foreground/60">Current Stock: {product.stockQuantity}</p>
+                    <p className="text-sm text-foreground/60">Supplier: {product.supplier}</p>
+                  </div>
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => showAddConfirmation(product)}
+                      className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      Add Stock
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => showAddConfirmation(product)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Add Stock
-                </button>
               </div>
             ))}
           </div>
@@ -250,32 +262,6 @@ export default function Restock() {
               >
                 Next
               </button>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12]">
-          <h2 className="text-lg font-semibold mb-4">Restock History</h2>
-          {restockHistory.length === 0 ? (
-            <p className="text-foreground/60">No restock history available</p>
-          ) : (
-            <div className="space-y-4">
-              {restockHistory.map((transaction) => (
-                <div key={transaction.id} className="p-3 bg-black/[.02] dark:bg-white/[.02] rounded-lg">
-                  <p className="text-sm text-foreground/60">Date: {new Date(transaction.date.toDate()).toLocaleDateString()}</p>
-                  <div className="mt-2">
-                    {transaction.items.map((item: RestockItem, index: number) => (
-                      <div key={index} className="ml-4 mt-2">
-                        <h3 className="font-medium">{item.productName}</h3>
-                        <p className="text-sm text-foreground/60">Quantity Added: {item.quantity}</p>
-                        <p className="text-sm text-foreground/60">Cost: Rp {(item.buyingPrice * item.quantity).toLocaleString()}</p>
-                        <p className="text-sm text-foreground/60">Supplier: {item.supplierName}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-sm font-medium mt-2">Total: Rp {Number(transaction.total).toLocaleString()}</p>
-                </div>
-              ))}
             </div>
           )}
         </div>
