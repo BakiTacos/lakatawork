@@ -10,6 +10,12 @@ export default function Home() {
       description: "Manage Products"
     },
     {
+      title: "Pricing",
+      icon: "/price.svg",
+      href: "/prices",
+      description: "Manage Products Price and Recommendations"
+    },
+    {
       title: "Inventory",
       icon: "/warehouse.svg",
       href: "/inventory/inventories",
