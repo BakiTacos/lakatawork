@@ -167,21 +167,21 @@ export default function Prices() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         {getCurrentPageItems().map((product) => (
-          <div key={product.id} className="bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12] hover:shadow-xl transition-shadow duration-200">
-            <div className="mb-3">
-              <h3 className="text-lg font-semibold text-foreground truncate" title={product.productName}>
+          <div key={product.id} className="bg-background rounded-lg shadow-lg p-3 border border-black/[.08] dark:border-white/[.12] hover:shadow-xl transition-shadow duration-200">
+            <div className="mb-2">
+              <h3 className="text-base font-semibold text-foreground truncate" title={product.productName}>
                 {product.productName}
               </h3>
-              <p className="text-sm text-foreground/60 mb-1">ID: {product.productId}</p>
-              <p className="text-sm text-foreground/60">Supplier: {product.supplier}</p>
+              <p className="text-xs text-foreground/60 mb-0.5">ID: {product.productId}</p>
+              <p className="text-xs text-foreground/60">Supplier: {product.supplier}</p>
             </div>
             
-            <div className="space-y-2 mt-4">
+            <div className="space-y-1.5 mt-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-foreground/60">Buying Price:</span>
-                <span className="font-medium">Rp {product.buyingPrice.toLocaleString()}</span>
+                <span className="text-xs text-foreground/60">Buying Price:</span>
+                <span className="text-sm font-medium">Rp {product.buyingPrice.toLocaleString()}</span>
               </div>
               {selectedMarkups.map(markup => {
                 const recommendedPrice = calculateRecommendedPrice(product.buyingPrice, markup);
