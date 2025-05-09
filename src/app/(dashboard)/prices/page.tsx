@@ -101,22 +101,22 @@ export default function Prices() {
   const [customMarkup, setCustomMarkup] = useState<string>('');
 
   return (
-    <div className="p-6 bg-background min-h-screen">
+    <div className="p-4 sm:p-6 bg-background min-h-screen max-w-[100vw] overflow-x-hidden">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Price Recommendations</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground">Price Recommendations</h1>
       </div>
 
-      <div className="mb-6 space-y-4">
-        <div className="flex items-center gap-4">
+      <div className="mb-6 space-y-4 w-full">
+        <div className="flex items-center gap-4 w-full">
           <input
             type="text"
             placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
+            className="flex-1 px-3 sm:px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
           />
         </div>
-        <div className="flex flex-wrap gap-3 p-4 border border-black/[.08] dark:border-white/[.12] rounded">
+        <div className="flex flex-wrap gap-2 sm:gap-3 p-3 sm:p-4 border border-black/[.08] dark:border-white/[.12] rounded">
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -125,7 +125,7 @@ export default function Prices() {
               value={customMarkup}
               onChange={(e) => setCustomMarkup(e.target.value)}
               placeholder="Custom %"
-              className="w-20 px-2 py-1 text-sm border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
+              className="w-16 sm:w-20 px-2 py-1 text-sm border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
             />
             <button
               onClick={() => {
@@ -167,7 +167,7 @@ export default function Prices() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 w-full">
         {getCurrentPageItems().map((product) => (
           <div key={product.id} className="bg-background rounded-lg shadow-lg p-3 border border-black/[.08] dark:border-white/[.12] hover:shadow-xl transition-shadow duration-200">
             <div className="mb-2">
