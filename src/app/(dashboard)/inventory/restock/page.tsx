@@ -31,26 +31,45 @@ export default function Restock() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [confirmQuantity, setConfirmQuantity] = useState(1);
+  const [restockHistory, setRestockHistory] = useState<any[]>([]);
   const itemsPerPage = 20;
   
   const router = useRouter();
 
   useEffect(() => {
-    const savedDraft = localStorage.getItem('restockTransactionDraft');
-    if (savedDraft) {
-      setSelectedProducts(JSON.parse(savedDraft));
-    }
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push('/auth');
         return;
       }
       fetchProducts();
+      fetchRestockHistory();
     });
 
     return () => unsubscribe();
   }, [router]);
+
+  const fetchRestockHistory = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      const transactionsRef = collection(db, 'transactions');
+      const q = query(
+        transactionsRef,
+        where('ownerId', '==', user.uid),
+        where('type', '==', 'restock')
+      );
+      const querySnapshot = await getDocs(q);
+      const historyData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setRestockHistory(historyData);
+    } catch (error) {
+      console.error('Error fetching restock history:', error);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -162,7 +181,7 @@ export default function Restock() {
 
       localStorage.removeItem('restockTransactionDraft');
       setSelectedProducts([]);
-      router.push('/inventory');
+      router.push('/inventory/inventories');
     } catch (error) {
       console.error('Error saving transaction:', error);
       alert('Error saving transaction. Please try again.');
@@ -174,7 +193,7 @@ export default function Restock() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-foreground">Restock Products</h1>
         <button
-          onClick={() => router.push('/inventory')}
+          onClick={() => router.push('/inventory/inventories')}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Back to Inventory
@@ -193,7 +212,7 @@ export default function Restock() {
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-1 gap-4">
             {getCurrentPageItems().map((product) => (
               <div key={product.id} className="bg-background border border-black/[.08] dark:border-white/[.12] rounded-lg p-4 flex justify-between items-center">
                 <div>
@@ -236,42 +255,27 @@ export default function Restock() {
         </div>
 
         <div className="bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12]">
-          <h2 className="text-lg font-semibold mb-4">Restock Summary</h2>
-          {selectedProducts.length === 0 ? (
-            <p className="text-foreground/60">No items selected for restocking</p>
+          <h2 className="text-lg font-semibold mb-4">Restock History</h2>
+          {restockHistory.length === 0 ? (
+            <p className="text-foreground/60">No restock history available</p>
           ) : (
             <div className="space-y-4">
-              {selectedProducts.map((item) => (
-                <div key={item.productId} className="flex justify-between items-center p-3 bg-black/[.02] dark:bg-white/[.02] rounded-lg">
-                  <div>
-                    <h3 className="font-medium">{item.productName}</h3>
-                    <p className="text-sm text-foreground/60">Quantity: {item.quantity}</p>
-                    <p className="text-sm text-foreground/60">Cost: Rp {(item.buyingPrice * item.quantity).toLocaleString()}</p>
+              {restockHistory.map((transaction) => (
+                <div key={transaction.id} className="p-3 bg-black/[.02] dark:bg-white/[.02] rounded-lg">
+                  <p className="text-sm text-foreground/60">Date: {new Date(transaction.date.toDate()).toLocaleDateString()}</p>
+                  <div className="mt-2">
+                    {transaction.items.map((item: RestockItem, index: number) => (
+                      <div key={index} className="ml-4 mt-2">
+                        <h3 className="font-medium">{item.productName}</h3>
+                        <p className="text-sm text-foreground/60">Quantity Added: {item.quantity}</p>
+                        <p className="text-sm text-foreground/60">Cost: Rp {(item.buyingPrice * item.quantity).toLocaleString()}</p>
+                        <p className="text-sm text-foreground/60">Supplier: {item.supplierName}</p>
+                      </div>
+                    ))}
                   </div>
-                  <button
-                    onClick={() => removeFromTransaction(item.productId)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    Remove
-                  </button>
+                  <p className="text-sm font-medium mt-2">Total: Rp {Number(transaction.total).toLocaleString()}</p>
                 </div>
               ))}
-              <div className="mt-4 pt-4 border-t border-black/[.08] dark:border-white/[.12]">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="font-semibold">Total Cost:</span>
-                  <span className="font-semibold">
-                    Rp {selectedProducts
-                      .reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0)
-                      .toLocaleString()}
-                  </span>
-                </div>
-                <button
-                  onClick={saveTransaction}
-                  className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                >
-                  Complete Restock
-                </button>
-              </div>
             </div>
           )}
         </div>

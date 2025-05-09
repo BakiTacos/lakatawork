@@ -95,7 +95,15 @@ export default function Inventory() {
 
   return (
     <div className="p-6 bg-background min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-foreground">Inventory Management</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Inventory Management</h1>
+        <button
+          onClick={() => router.push('/inventory/restock')}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Restock Products
+        </button>
+      </div>
 
       <div className="mb-6">
         <input
