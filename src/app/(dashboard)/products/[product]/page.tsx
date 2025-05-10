@@ -22,22 +22,11 @@ export default function Stocks() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [selectedSupplier, setSelectedSupplier] = useState('');
   const itemsPerPage = 24;
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = (
-      product.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.productName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    const matchesSupplier = !selectedSupplier || product.supplier === selectedSupplier;
-    const matchesPrice = (
-      (!minPrice || product.sellingPrice >= parseFloat(minPrice)) &&
-      (!maxPrice || product.sellingPrice <= parseFloat(maxPrice))
-    );
-    return matchesSearch && matchesSupplier && matchesPrice;
-  });
+  const filteredProducts = products.filter(product => 
+    product.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   
@@ -183,79 +172,48 @@ export default function Stocks() {
     <div className="p-6 bg-background min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-foreground">Stock Management</h1>
       
-      <div className="mb-8 space-y-4 max-w-2xl">
+      <div className="fixed bottom-4 right-4 z-50">
         <button
           onClick={() => setIsSearchOpen(!isSearchOpen)}
-          className="w-full flex items-center justify-between p-4 bg-background rounded-lg shadow-lg border border-black/[.08] dark:border-white/[.12] hover:bg-black/[.02] dark:hover:bg-white/[.02] transition-colors duration-150"
+          className="flex items-center gap-2 px-4 py-3 bg-foreground text-background rounded-full shadow-lg hover:bg-foreground/90 transition-all duration-200 transform hover:scale-105"
         >
-          <span className="text-foreground font-medium">Search & Filter Products</span>
           <svg
-            className={`w-5 h-5 transform transition-transform duration-200 ${isSearchOpen ? 'rotate-180' : ''}`}
+            className="w-5 h-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
+          <span className="font-medium">Search</span>
         </button>
-        
+
         {isSearchOpen && (
-          <div className="mt-2 space-y-4 bg-background rounded-lg shadow-lg p-4 border border-black/[.08] dark:border-white/[.12]">
-            <div className="space-y-2">
-          <input
-            type="text"
-            placeholder="Search by Product ID or Name"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-foreground">Min Price (Rp)</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60">Rp</span>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40">
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-background rounded-lg shadow-xl p-6 space-y-4 z-50">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-foreground">Search Products</h2>
+                <button
+                  onClick={() => setIsSearchOpen(false)}
+                  className="text-foreground/60 hover:text-foreground"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
               <input
-                type="number"
-                placeholder="0"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="pl-10 w-full border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
+                type="text"
+                placeholder="Search by Product ID or Name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full border border-black/[.08] dark:border-white/[.12] p-4 rounded-lg focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground text-lg"
+                autoFocus
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-foreground">Max Price (Rp)</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60">Rp</span>
-              <input
-                type="number"
-                placeholder="0"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="pl-10 w-full border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">Filter by Supplier</label>
-          <select
-            value={selectedSupplier}
-            onChange={(e) => setSelectedSupplier(e.target.value)}
-            className="w-full border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
-          >
-            <option value="">All Suppliers</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.name}>
-                {supplier.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        )}
       </div>
-    )}
-  </div>
 
       <form onSubmit={handleSubmit} className="mb-8 space-y-4 max-w-2xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
