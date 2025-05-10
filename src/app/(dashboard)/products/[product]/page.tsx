@@ -207,6 +207,11 @@ export default function Stocks() {
                 placeholder="Search by Product ID or Name"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setIsSearchOpen(false);
+                  }
+                }}
                 className="w-full border border-black/[.08] dark:border-white/[.12] p-4 rounded-lg focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground text-lg"
                 autoFocus
               />
