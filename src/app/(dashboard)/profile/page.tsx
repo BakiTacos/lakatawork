@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { onAuthStateChanged, updateProfile, signOut, User } from 'firebase/auth';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState('');
+  const [productCount, setProductCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -19,10 +21,22 @@ export default function ProfilePage() {
       }
       setUser(currentUser);
       setDisplayName(currentUser.displayName || '');
+      fetchProductCount(currentUser.uid);
     });
 
     return () => unsubscribe();
   }, [router]);
+
+  const fetchProductCount = async (userId: string) => {
+    try {
+      const productsRef = collection(db, 'products');
+      const q = query(productsRef, where('ownerId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      setProductCount(querySnapshot.size);
+    } catch (error) {
+      console.error('Error fetching product count:', error);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -68,19 +82,19 @@ export default function ProfilePage() {
           
           <div className="space-y-4">
             <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">{user.email}</p>
+              <p className="text-sm text-foreground/60">Email</p>
+              <p className="font-medium text-foreground">{user.email}</p>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500">Display Name</p>
+              <p className="text-sm text-foreground/60">Display Name</p>
               {isEditing ? (
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="flex-1 px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    className="flex-1 px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-foreground bg-background"
                     placeholder="Enter display name"
                   />
                   <button
@@ -101,7 +115,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="flex justify-between items-center">
-                  <p className="font-medium">{user.displayName || 'Not set'}</p>
+                  <p className="font-medium text-foreground">{user.displayName || 'Not set'}</p>
                   <button
                     onClick={() => setIsEditing(true)}
                     className="text-blue-500 hover:text-blue-600"
@@ -113,13 +127,18 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <p className="text-sm text-gray-500">Account Created</p>
-              <p className="font-medium">{user.metadata.creationTime}</p>
+              <p className="text-sm text-foreground/60">Total Products</p>
+              <p className="font-medium text-foreground">{productCount}</p>
             </div>
 
             <div>
-              <p className="text-sm text-gray-500">Last Sign In</p>
-              <p className="font-medium">{user.metadata.lastSignInTime}</p>
+              <p className="text-sm text-foreground/60">Account Created</p>
+              <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
+            </div>
+
+            <div>
+              <p className="text-sm text-foreground/60">Last Sign In</p>
+              <p className="font-medium text-foreground">{user.metadata.lastSignInTime}</p>
             </div>
           </div>
         </div>
