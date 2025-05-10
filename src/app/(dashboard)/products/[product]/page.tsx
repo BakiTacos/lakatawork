@@ -258,28 +258,28 @@ export default function Stocks() {
   </div>
 
       <form onSubmit={handleSubmit} className="mb-8 space-y-4 max-w-2xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <input
             type="text"
             name="productId"
             value={newProduct.productId}
             onChange={handleInputChange}
             placeholder="Enter product ID"
-            className="border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
+            className="w-50 border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
             required
           />
-        </div>
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">Product Name</label>
-          <input
-            type="text"
-            name="productName"
-            value={newProduct.productName}
-            onChange={handleInputChange}
-            placeholder="Enter product name"
-            className="border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
-            required
-          />
+          <div className="md:col-span-3">
+            <label className="block text-sm font-medium text-foreground">Product Name</label>
+            <input
+              type="text"
+              name="productName"
+              value={newProduct.productName}
+              onChange={handleInputChange}
+              placeholder="Enter product name"
+              className="w-full border border-black/[.08] dark:border-white/[.12] p-2 rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
+              required
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-foreground">Buying Price (Rp)</label>
