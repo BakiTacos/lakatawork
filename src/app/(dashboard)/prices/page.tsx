@@ -176,7 +176,7 @@ export default function Prices() {
               </h3>
               <p className="text-[10px] sm:text-xs text-foreground/60 mb-0.5">ID: {product.productId}</p>
               <p className="text-[10px] sm:text-xs text-foreground/60">Supplier: {product.supplier}</p>
-              <p className="text-[10px] sm:text-xs text-foreground/60">Current Sale Price: {product.sellingPrice}</p>
+              <p className="text-[10px] sm:text-xs text-foreground/60">Current Sale Price: Rp.{product.sellingPrice}</p>
             </div>
             
             <div className="space-y-1 mt-2 sm:mt-3">
