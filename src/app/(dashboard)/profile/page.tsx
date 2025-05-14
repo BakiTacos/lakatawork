@@ -11,6 +11,8 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [productCount, setProductCount] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [showTotalPrice, setShowTotalPrice] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,8 +35,21 @@ export default function ProfilePage() {
       const q = query(productsRef, where('ownerId', '==', userId));
       const querySnapshot = await getDocs(q);
       setProductCount(querySnapshot.size);
+      
+      const productValues: number[] = [];
+      querySnapshot.forEach((doc) => {
+        const product = doc.data();
+        const stock = parseFloat(product.stockQuantity);
+        const buyingPrice = parseFloat(product.buyingPrice);
+        if (!isNaN(stock) && !isNaN(buyingPrice)) {
+          const productValue = stock * buyingPrice;
+          productValues.push(productValue);
+        }
+      });
+      const totalPrice = productValues.reduce((sum, value) => sum + value, 0);
+      setTotalPrice(totalPrice);
     } catch (error) {
-      console.error('Error fetching product count:', error);
+      console.error('Error fetching product data:', error);
     }
   };
 
@@ -132,6 +147,20 @@ export default function ProfilePage() {
             </div>
 
             <div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-foreground/60">Amount of Goods</p>
+                <button
+                  onClick={() => setShowTotalPrice(!showTotalPrice)}
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  {showTotalPrice ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {showTotalPrice && (
+                <p className="font-medium text-foreground">
+                  Rp {totalPrice.toLocaleString()}
+                </p>
+              )}
               <p className="text-sm text-foreground/60">Account Created</p>
               <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
             </div>
