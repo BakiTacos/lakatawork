@@ -165,6 +165,46 @@ export default function ProfilePage() {
               <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
             </div>
 
+
+            <div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-foreground/60">Estimated Amounts of Profit</p>
+                <button
+                  onClick={() => setShowTotalPrice(!showTotalPrice)}
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  {showTotalPrice ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {showTotalPrice && (
+                <p className="font-medium text-foreground">
+                  Rp {totalPrice.toLocaleString()}
+                </p>
+              )}
+              <p className="text-sm text-foreground/60">Account Created</p>
+              <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
+            </div>
+
+
+            <div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-foreground/60">Estimated Amounts of Profit Only</p>
+                <button
+                  onClick={() => setShowTotalPrice(!showTotalPrice)}
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  {showTotalPrice ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {showTotalPrice && (
+                <p className="font-medium text-foreground">
+                  Rp {totalPrice.toLocaleString()}
+                </p>
+              )}
+              <p className="text-sm text-foreground/60">Account Created</p>
+              <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
+            </div>
+
             <div>
               <p className="text-sm text-foreground/60">Last Sign In</p>
               <p className="font-medium text-foreground">{user.metadata.lastSignInTime}</p>
