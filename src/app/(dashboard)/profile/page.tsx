@@ -27,6 +27,7 @@ export default function ProfilePage() {
       setUser(currentUser);
       setDisplayName(currentUser.displayName || '');
       fetchProductCount(currentUser.uid);
+      fetchProductProfitCount(currentUser.uid);
     });
 
     return () => unsubscribe();
