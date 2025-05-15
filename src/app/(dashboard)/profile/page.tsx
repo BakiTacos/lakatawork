@@ -12,10 +12,13 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [productCount, setProductCount] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [profitCount, setProfitCount] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
   const [productCountProfit, setProductProfitCount] = useState(0);
   const [totalPriceProfit, setTotalPriceProfit] = useState(0);
   const [showTotalPrice, setShowTotalPrice] = useState(false);
   const [showTotalPriceProfit, setShowTotalPriceProfit] = useState(false);
+  const [showTotalProfit, setShowTotalProfit] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -28,6 +31,7 @@ export default function ProfilePage() {
       setDisplayName(currentUser.displayName || '');
       fetchProductCount(currentUser.uid);
       fetchProductProfitCount(currentUser.uid);
+      fetchTotalProfit(currentUser.uid);
     });
 
     return () => unsubscribe();
@@ -81,6 +85,32 @@ export default function ProfilePage() {
       });
       const totalPriceProfit = productValues.reduce((sum, value) => sum + value, 0);
       setTotalPriceProfit(totalPriceProfit);
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+    }
+  };
+
+
+
+  const fetchTotalProfit = async (userId: string) => {
+    try {
+      const productsRef = collection(db, 'products');
+      const q = query(productsRef, where('ownerId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      setProfitCount(querySnapshot.size);
+      
+      const productValues: number[] = [];
+      querySnapshot.forEach((doc) => {
+        const product = doc.data();
+        const stock = parseFloat(product.stockQuantity);
+        const profit = product.sellingPrice - product.buyingPrice - (product.sellingPrice * 0.13) - (product.sellingPrice * 0.04);
+        if (!isNaN(stock) && !isNaN(profit)) {
+          const productValue = stock * profit;
+          productValues.push(productValue);
+        }
+      });
+      const totalProfit = productValues.reduce((sum, value) => sum + value, 0);
+      setTotalProfit(totalProfit);
     } catch (error) {
       console.error('Error fetching product data:', error);
     }
@@ -215,15 +245,33 @@ export default function ProfilePage() {
               )}
 
 
-              <p className="text-sm text-foreground/60">Account Created</p>
-              <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
+
+
+<div className="flex justify-between items-center">
+                <p className="text-sm text-foreground/60">Estimation of Profit Total</p>
+                <button
+                  onClick={() => setShowTotalProfit(!showTotalProfit)}
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  {showTotalProfit ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {showTotalProfit && (
+                <p className="font-medium text-foreground">
+                  Rp {totalProfit.toLocaleString()}
+                </p>
+              )}
+
+
+              
+            </div>
             </div>
 
-              <p className="text-sm text-foreground/60">Account Created</p>
-              <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
-            </div>
+              
 
             <div>
+            <p className="text-sm text-foreground/60">Account Created</p>
+            <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
               <p className="text-sm text-foreground/60">Last Sign In</p>
               <p className="font-medium text-foreground">{user.metadata.lastSignInTime}</p>
             </div>
