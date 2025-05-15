@@ -12,7 +12,10 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [productCount, setProductCount] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [productCountProfit, setProductProfitCount] = useState(0);
+  const [totalPriceProfit, setTotalPriceProfit] = useState(0);
   const [showTotalPrice, setShowTotalPrice] = useState(false);
+  const [showTotalPriceProfit, setShowTotalPriceProfit] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,6 +32,8 @@ export default function ProfilePage() {
     return () => unsubscribe();
   }, [router]);
 
+  // Amount of Goods Function
+  // Total Price Function
   const fetchProductCount = async (userId: string) => {
     try {
       const productsRef = collection(db, 'products');
@@ -53,6 +58,34 @@ export default function ProfilePage() {
     }
   };
 
+
+
+  const fetchProductProfitCount = async (userId: string) => {
+    try {
+      const productsRef = collection(db, 'products');
+      const q = query(productsRef, where('ownerId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      setProductProfitCount(querySnapshot.size);
+      
+      const productValues: number[] = [];
+      querySnapshot.forEach((doc) => {
+        const product = doc.data();
+        const stock = parseFloat(product.stockQuantity);
+        const buyingPrice = parseFloat(product.buyingPrice);
+        const profit = product.sellingPrice - product.buyingPrice - (product.sellingPrice * 0.13) - (product.sellingPrice * 0.04);
+        if (!isNaN(stock) && !isNaN(buyingPrice)) {
+          const productValue = stock * (buyingPrice + profit);
+          productValues.push(productValue);
+        }
+      });
+      const totalPriceProfit = productValues.reduce((sum, value) => sum + value, 0);
+      setTotalPriceProfit(totalPriceProfit);
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+    }
+  };
+
+  // Logout Function
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -146,6 +179,7 @@ export default function ProfilePage() {
               <p className="font-medium text-foreground">{productCount}</p>
             </div>
 
+            
             <div>
               <div className="flex justify-between items-center">
                 <p className="text-sm text-foreground/60">Amount of Goods</p>
@@ -161,46 +195,29 @@ export default function ProfilePage() {
                   Rp {totalPrice.toLocaleString()}
                 </p>
               )}
+
+
+              <div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-foreground/60">Estimation of Asset</p>
+                <button
+                  onClick={() => setShowTotalPriceProfit(!showTotalPriceProfit)}
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  {showTotalPriceProfit ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {showTotalPriceProfit && (
+                <p className="font-medium text-foreground">
+                  Rp {totalPriceProfit.toLocaleString()}
+                </p>
+              )}
+
+
               <p className="text-sm text-foreground/60">Account Created</p>
               <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
             </div>
 
-
-            <div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-foreground/60">Estimated Amounts of Profit</p>
-                <button
-                  onClick={() => setShowTotalPrice(!showTotalPrice)}
-                  className="text-blue-500 hover:text-blue-600"
-                >
-                  {showTotalPrice ? 'Hide' : 'Show'}
-                </button>
-              </div>
-              {showTotalPrice && (
-                <p className="font-medium text-foreground">
-                  Rp {totalPrice.toLocaleString()}
-                </p>
-              )}
-              <p className="text-sm text-foreground/60">Account Created</p>
-              <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
-            </div>
-
-
-            <div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-foreground/60">Estimated Amounts of Profit Only</p>
-                <button
-                  onClick={() => setShowTotalPrice(!showTotalPrice)}
-                  className="text-blue-500 hover:text-blue-600"
-                >
-                  {showTotalPrice ? 'Hide' : 'Show'}
-                </button>
-              </div>
-              {showTotalPrice && (
-                <p className="font-medium text-foreground">
-                  Rp {totalPrice.toLocaleString()}
-                </p>
-              )}
               <p className="text-sm text-foreground/60">Account Created</p>
               <p className="font-medium text-foreground">{user.metadata.creationTime}</p>
             </div>
@@ -212,6 +229,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </div>
+  </div>
   );
 }
