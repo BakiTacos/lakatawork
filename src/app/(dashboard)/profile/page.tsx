@@ -200,7 +200,7 @@ export default function ProfilePage() {
 
               <div>
               <div className="flex justify-between items-center">
-                <p className="text-sm text-foreground/60">Estimation of Asset</p>
+                <p className="text-sm text-foreground/60">Estimation of Asset (+Profit)</p>
                 <button
                   onClick={() => setShowTotalPriceProfit(!showTotalPriceProfit)}
                   className="text-blue-500 hover:text-blue-600"

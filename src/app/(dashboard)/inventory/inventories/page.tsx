@@ -19,18 +19,34 @@ export default function Inventory() {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInventory, setFilteredInventory] = useState<InventoryItem[]>([]);
+  const [sortField, setSortField] = useState<'productName' | 'stockQuantity'>('productName');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const itemsPerPage = 20;
   const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
   
   useEffect(() => {
-    const filtered = inventory.filter(item =>
+    let filtered = inventory.filter(item =>
       item.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.supplier.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Apply sorting
+    filtered = [...filtered].sort((a, b) => {
+      if (sortField === 'productName') {
+        return sortDirection === 'asc' 
+          ? a.productName.localeCompare(b.productName)
+          : b.productName.localeCompare(a.productName);
+      } else {
+        return sortDirection === 'asc'
+          ? a.stockQuantity - b.stockQuantity
+          : b.stockQuantity - a.stockQuantity;
+      }
+    });
+
     setFilteredInventory(filtered);
-    setCurrentPage(1); // Reset to first page when search changes
-  }, [inventory, searchTerm]);
+    setCurrentPage(1); // Reset to first page when search or sort changes
+  }, [inventory, searchTerm, sortField, sortDirection]);
 
   const getCurrentPageItems = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -105,14 +121,32 @@ export default function Inventory() {
         </button>
       </div>
 
-      <div className="mb-6">
-        <input
+      <div className="flex gap-4 mb-6">
+        <div className="flex-1">
+          <input
           type="text"
           placeholder="Search by Product ID, Name, or Supplier..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
-        />
+          />
+        </div>
+        <div className="flex gap-2">
+          <select
+            value={sortField}
+            onChange={(e) => setSortField(e.target.value as 'productName' | 'stockQuantity')}
+            className="px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
+          >
+            <option value="productName">Sort by Name</option>
+            <option value="stockQuantity">Sort by Stock</option>
+          </select>
+          <button
+            onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
+            className="px-4 py-2 border border-black/[.08] dark:border-white/[.12] rounded hover:bg-black/[.02] dark:hover:bg-white/[.02] focus:ring-2 focus:ring-foreground focus:border-foreground outline-none bg-background text-foreground"
+          >
+            {sortDirection === 'asc' ? '↑' : '↓'}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
