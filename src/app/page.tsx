@@ -28,6 +28,12 @@ export default function Home() {
       description: "Manage Product Purchases"
     },
     {
+      title: "Reports",
+      icon: "/reports.svg",
+      href: "/reports",
+      description: "Reports"
+    },
+    {
       title: "Tasks",
       icon: "/tasks.svg",
       href: "/tasks",
