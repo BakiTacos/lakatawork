@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useAuth } from '@/app/auth/AuthContext';
+import * as XLSX from 'xlsx';
 
 interface RestockItem {
   productId: string;
@@ -27,9 +28,39 @@ export default function RestockReport() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState('all');
+  const [sortByMonth, setSortByMonth] = useState<string>('all');
   const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
   const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
   const { user } = useAuth();
+
+  const exportToExcel = () => {
+    const filteredData = filteredTransactions.map(transaction => ({
+      Date: transaction.date.toDate().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      Products: transaction.items.map(item => item.productName).join(', '),
+      'Total Items': transaction.items.reduce((sum, item) => sum + item.quantity, 0),
+      'Total Cost': `Rp ${Math.round(transaction.total).toLocaleString()}`,
+      Details: transaction.items.map(item => 
+        `${item.quantity} x ${item.productName} @ Rp ${item.buyingPrice.toLocaleString()}`
+      ).join(' • ')
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Restock History');
+    
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const filename = sortByMonth !== 'all' 
+      ? `restock_history_${monthNames[parseInt(sortByMonth)]}_${new Date().getFullYear()}.xlsx`
+      : `restock_history_all.xlsx`;
+
+    XLSX.writeFile(workbook, filename);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -90,6 +121,15 @@ export default function RestockReport() {
     }
   };
 
+  const sortTransactionsByMonth = (transactions: Transaction[]) => {
+    if (sortByMonth === 'all') return transactions;
+    
+    return transactions.filter(t => {
+      const month = t.date.toDate().getMonth();
+      return month === parseInt(sortByMonth);
+    });
+  };
+
   const calculateMetrics = (transactions: Transaction[]) => {
     return transactions.reduce((metrics, t) => {
       const totalItems = t.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -110,7 +150,7 @@ export default function RestockReport() {
     });
   };
 
-  const filteredTransactions = filterTransactionsByDate(transactions);
+  const filteredTransactions = sortTransactionsByMonth(filterTransactionsByDate(transactions));
   const metrics = calculateMetrics(filteredTransactions);
 
   if (loading) {
@@ -143,6 +183,36 @@ export default function RestockReport() {
           </div>
           
           <div className="flex items-center gap-4">
+            <button
+              onClick={exportToExcel}
+              className="px-3 py-1 rounded border border-black/[.08] dark:border-white/[.12] hover:bg-black/[.02] dark:hover:bg-white/[.02] flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Export to Excel
+            </button>
+            <select
+              className="bg-background border border-black/[.08] dark:border-white/[.12] rounded px-2 py-1"
+              value={sortByMonth}
+              onChange={(e) => setSortByMonth(e.target.value)}
+            >
+              <option value="all">All Months</option>
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
             <select
               className="bg-background border border-black/[.08] dark:border-white/[.12] rounded px-2 py-1"
               value={dateRange}
