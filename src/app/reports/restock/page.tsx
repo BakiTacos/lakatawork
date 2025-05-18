@@ -34,31 +34,63 @@ export default function RestockReport() {
   const { user } = useAuth();
 
   const exportToExcel = () => {
-    const filteredData = filteredTransactions.map(transaction => ({
-      Date: transaction.date.toDate().toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      Products: transaction.items.map(item => item.productName).join(', '),
-      'Total Items': transaction.items.reduce((sum, item) => sum + item.quantity, 0),
-      'Total Cost': `Rp ${Math.round(transaction.total).toLocaleString()}`,
-      Details: transaction.items.map(item => 
-        `${item.quantity} x ${item.productName} @ Rp ${item.buyingPrice.toLocaleString()}`
-      ).join(' • ')
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const currentMonth = sortByMonth !== 'all' ? monthNames[parseInt(sortByMonth)] : 'All';
+    const currentYear = new Date().getFullYear();
+  
+    const worksheet_data = [
+      [currentMonth + ' ' + currentYear],
+      ['Barang Masuk'],
+      ['Date', 'Products', 'Total Items', 'Total Cost', 'Details']
+    ];
+  
+    filteredTransactions.forEach(transaction => {
+      worksheet_data.push([
+        transaction.date.toDate().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        transaction.items.map(item => item.productName).join(', '),
+        transaction.items.reduce((sum, item) => sum + item.quantity, 0),
+        'Rp ' + Math.round(transaction.total).toLocaleString(),
+        transaction.items.map(item => 
+          `${item.quantity} x ${item.productName} @ Rp ${item.buyingPrice.toLocaleString()}`
+        ).join(' • ')
+      ]);
+    });
+  
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheet_data);
+    
+    // Style the header
+    if (worksheet['!ref']) {
+      const range = XLSX.utils.decode_range(worksheet['!ref']);
+      for (let i = 0; i <= 2; i++) {
+        for (let C = range.s.c; C <= range.e.c; C++) {
+          const cell = worksheet[XLSX.utils.encode_cell({r: i, c: C})];
+          if (!cell) continue;
+          cell.s = {
+            fill: { fgColor: { rgb: i === 2 ? "CCFFCC" : "FFFFFF" } },
+            font: { bold: true },
+            alignment: { horizontal: "center" }
+          };
+        }
+      }
+    }
+  
+    // Merge cells for title and subtitle
+    worksheet['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }
+    ];
+  
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Restock History');
-    
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  
     const filename = sortByMonth !== 'all' 
-      ? `restock_history_${monthNames[parseInt(sortByMonth)]}_${new Date().getFullYear()}.xlsx`
+      ? `restock_history_${monthNames[parseInt(sortByMonth)]}_${currentYear}.xlsx`
       : `restock_history_all.xlsx`;
-
+  
     XLSX.writeFile(workbook, filename);
   };
 
