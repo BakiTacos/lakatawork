@@ -77,7 +77,9 @@ export default function ProfilePage() {
         const product = doc.data();
         const stock = parseFloat(product.stockQuantity);
         const buyingPrice = parseFloat(product.buyingPrice);
-        const profit = product.sellingPrice - product.buyingPrice - (product.sellingPrice * 0.13) - (product.sellingPrice * 0.04);
+        const adminFee = product.sellingPrice * 0.13;
+        const packagingFee = product.sellingPrice * 0.04;
+        const profit = product.sellingPrice - product.buyingPrice - adminFee - packagingFee;
         if (!isNaN(stock) && !isNaN(buyingPrice)) {
           const productValue = stock * (buyingPrice + profit);
           productValues.push(productValue);
@@ -103,7 +105,9 @@ export default function ProfilePage() {
       querySnapshot.forEach((doc) => {
         const product = doc.data();
         const stock = parseFloat(product.stockQuantity);
-        const profit = product.sellingPrice - product.buyingPrice - (product.sellingPrice * 0.13) - (product.sellingPrice * 0.04);
+        const adminFee = product.sellingPrice * 0.13;
+        const packagingFee = product.sellingPrice * 0.04;
+        const profit = product.sellingPrice - product.buyingPrice - adminFee - packagingFee;
         if (!isNaN(stock) && !isNaN(profit)) {
           const productValue = stock * profit;
           productValues.push(productValue);

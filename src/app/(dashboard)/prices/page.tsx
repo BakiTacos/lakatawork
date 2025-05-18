@@ -23,6 +23,9 @@ export default function Prices() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showAnalyzeModal, setShowAnalyzeModal] = useState(false);
   const [analyzePrice, setAnalyzePrice] = useState('');
+  const [showMarkupModal, setShowMarkupModal] = useState(false);
+  const [basePrice, setBasePrice] = useState('');
+  const [selectedMarkup, setSelectedMarkup] = useState<number | null>(null);
   
   const handleAnalyzePrice = () => {
     const price = parseFloat(analyzePrice);
@@ -126,13 +129,94 @@ export default function Prices() {
     <div className="p-6 bg-background min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-foreground">Price Recommendations</h1>
-        <button
-          onClick={() => setShowAnalyzeModal(true)}
-          className="px-4 py-2 bg-foreground text-background rounded hover:bg-foreground/90 transition-colors"
-        >
-          Price Analyze
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowMarkupModal(true)}
+            className="px-4 py-2 bg-foreground text-background rounded hover:bg-foreground/90 transition-colors"
+          >
+            Price Markup
+          </button>
+          <button
+            onClick={() => setShowAnalyzeModal(true)}
+            className="px-4 py-2 bg-foreground text-background rounded hover:bg-foreground/90 transition-colors"
+          >
+            Price Analyze
+          </button>
+        </div>
       </div>
+
+      {showMarkupModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+            <h2 className="text-xl font-bold mb-4">Price Markup Calculator</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Enter Base Price</label>
+                <input
+                  type="number"
+                  value={basePrice}
+                  onChange={(e) => setBasePrice(e.target.value)}
+                  className="w-full px-3 py-2 border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none"
+                  placeholder="Enter base price..."
+                />
+              </div>
+              {basePrice && (
+                <div className="grid grid-cols-3 gap-2">
+                  {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((markup) => (
+                    <button
+                      key={markup}
+                      onClick={() => setSelectedMarkup(markup)}
+                      className={`px-3 py-2 border rounded text-sm ${selectedMarkup === markup ? 'bg-foreground text-background' : 'border-black/[.08] dark:border-white/[.12] hover:bg-black/[.02] dark:hover:bg-white/[.02]'}`}
+                    >
+                      {markup}%
+                    </button>
+                  ))}
+                </div>
+              )}
+              {basePrice && selectedMarkup !== null && (
+                <div className="space-y-2 mt-4 p-4 border border-black/[.08] dark:border-white/[.12] rounded">
+                  <div className="flex justify-between items-center text-sm">
+                    <span>Base Price:</span>
+                    <span>Rp {parseFloat(basePrice).toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                     <span>Markup ({selectedMarkup}%):</span>
+                     <span>Rp {Math.round(parseFloat(basePrice) * (selectedMarkup / 100)).toLocaleString('id-ID')}</span>
+                   </div>
+                   <div className="flex justify-between items-center text-sm">
+                      <span>Selling Price:</span>
+                      <span>Rp {Math.round(calculateRecommendedPrice(parseFloat(basePrice), selectedMarkup)).toLocaleString('id-ID')}</span>
+                   </div>
+                   <div className="flex justify-between items-center text-sm">
+                      <span>Admin Fee (13%):</span>
+                      <span>Rp {Math.round(calculateRecommendedPrice(parseFloat(basePrice), selectedMarkup) * 0.13).toLocaleString('id-ID')}</span>
+                   </div>
+                   <div className="flex justify-between items-center text-sm">
+                      <span>Packaging Fee (4%):</span>
+                      <span>Rp {Math.round(calculateRecommendedPrice(parseFloat(basePrice), selectedMarkup) * 0.04).toLocaleString('id-ID')}</span>
+                   </div>
+                   <div className="flex justify-between items-center text-sm font-medium">
+                      <span>Estimated Profit:</span>
+                      <span>Rp {Math.round(calculateRecommendedPrice(parseFloat(basePrice), selectedMarkup) - parseFloat(basePrice) - calculateRecommendedPrice(parseFloat(basePrice), selectedMarkup) * 0.17).toLocaleString('id-ID')}</span>
+                   </div>
+                </div>
+              )}
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => {
+                    setShowMarkupModal(false);
+                    setBasePrice('');
+                    setSelectedMarkup(null);
+                  }}
+                  className="px-4 py-2 bg-foreground text-background rounded hover:bg-foreground/90 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAnalyzeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
