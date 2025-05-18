@@ -134,11 +134,31 @@ export default function Restock() {
       }]);
     }
 
-    // Update stock quantity in products collection
     try {
+      // Update stock quantity in products collection
       await updateDoc(doc(db, 'products', selectedProduct.id), {
-        stockQuantity: selectedProduct.stockQuantity + confirmQuantity
+        stockQuantity: selectedProduct.stockQuantity + confirmQuantity,
+        lastRestockDate: new Date()
       });
+
+      // Create restock transaction
+      const user = auth.currentUser;
+      if (user) {
+        const transactionRef = collection(db, 'transactions');
+        await addDoc(transactionRef, {
+          ownerId: user.uid,
+          type: 'restock',
+          date: new Date(),
+          items: [{
+            productId: selectedProduct.productId,
+            productName: selectedProduct.productName,
+            buyingPrice: selectedProduct.buyingPrice,
+            supplierName: selectedProduct.supplier,
+            quantity: confirmQuantity
+          }],
+          total: (selectedProduct.buyingPrice * confirmQuantity).toFixed(2)
+        });
+      }
 
       // Update local state
       setProducts(products.map(product =>
@@ -146,6 +166,9 @@ export default function Restock() {
           ? { ...product, stockQuantity: product.stockQuantity + confirmQuantity }
           : product
       ));
+
+      // Refresh restock history
+      await fetchRestockHistory();
     } catch (error) {
       console.error('Error updating stock quantity:', error);
     }
