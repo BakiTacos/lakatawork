@@ -21,7 +21,25 @@ export default function Prices() {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const allMarkups = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  const [showAnalyzeModal, setShowAnalyzeModal] = useState(false);
+  const [analyzePrice, setAnalyzePrice] = useState('');
+  
+  const handleAnalyzePrice = () => {
+    const price = parseFloat(analyzePrice);
+    if (isNaN(price)) return;
+    
+    const packagingFee = price * 0.04;
+    const adminFee = price * 0.13;
+    const finalPrice = price - packagingFee - adminFee;
+    
+    return {
+      packagingFee,
+      adminFee,
+      finalPrice
+    };
+  };
+
+  const allMarkups = [10, 20, 30, 40, 50, 60, 70, 80, 90];
   const [selectedMarkups, setSelectedMarkups] = useState<number[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('selectedMarkups');
@@ -108,7 +126,60 @@ export default function Prices() {
     <div className="p-6 bg-background min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-foreground">Price Recommendations</h1>
+        <button
+          onClick={() => setShowAnalyzeModal(true)}
+          className="px-4 py-2 bg-foreground text-background rounded hover:bg-foreground/90 transition-colors"
+        >
+          Price Analyze
+        </button>
       </div>
+
+      {showAnalyzeModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+            <h2 className="text-xl font-bold mb-4">Price Analysis</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Enter Price</label>
+                <input
+                  type="number"
+                  value={analyzePrice}
+                  onChange={(e) => setAnalyzePrice(e.target.value)}
+                  className="w-full px-3 py-2 border border-black/[.08] dark:border-white/[.12] rounded focus:ring-2 focus:ring-foreground focus:border-foreground outline-none"
+                  placeholder="Enter price..."
+                />
+              </div>
+              {analyzePrice && (
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span>Packaging Fee (4%):</span>
+                    <span>Rp {(parseFloat(analyzePrice) * 0.04).toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span>Admin Fee (13%):</span>
+                    <span>Rp {(parseFloat(analyzePrice) * 0.13).toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm font-medium">
+                    <span>Final Price:</span>
+                    <span>Rp {(parseFloat(analyzePrice) - (parseFloat(analyzePrice) * 0.04) - (parseFloat(analyzePrice) * 0.13)).toLocaleString('id-ID')}</span>
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => {
+                    setShowAnalyzeModal(false);
+                    setAnalyzePrice('');
+                  }}
+                  className="px-4 py-2 bg-foreground text-background rounded hover:bg-foreground/90 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="mb-6 space-y-4 w-full">
         <div className="flex items-center gap-4 w-full">
