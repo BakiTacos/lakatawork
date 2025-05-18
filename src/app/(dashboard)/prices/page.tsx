@@ -75,8 +75,12 @@ export default function Prices() {
   };
 
   const calculateRecommendedPrice = (buyingPrice: number, markup: number) => {
-    const basePrice = buyingPrice * 1.13; // Add 13% VAT
-    return basePrice * (1 + markup / 100); // Add markup percentage
+    const basePrice = buyingPrice ; // Add 13% VAT
+    if (markup <=99) {
+    return basePrice / (1 - markup / 100); // Add markup percentage
+    } else {
+      return basePrice * (1 + markup / 100); // Add markup percentage
+    }
   };
 
   const calculateProfit = (recommendedPrice: number, buyingPrice: number) => {
@@ -196,8 +200,8 @@ export default function Prices() {
                         <div className="relative group">
                           <Info className="w-3 h-3 text-foreground/40" />
                           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1.5 px-2 py-1.5 bg-black/90 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-                            Base Price = Buying Price + 13% Admin<br />
-                            Final Price = Base Price + {markup}% Markup
+                            Base Price = Buying Price<br />
+                            Final Price = Base Price / (1 - {markup}% Markup / 100)
                           </div>
                         </div>
                       </div>

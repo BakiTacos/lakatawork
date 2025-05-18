@@ -328,7 +328,7 @@ export default function Stocks() {
                     </div>
                   </div>
                 </div>
-                <span className="font-medium text-emerald-600">Rp {calculateProfit(product.sellingPrice, product.buyingPrice).toLocaleString('id-ID')}</span>
+        <span className="font-medium text-emerald-600">Rp {calculateProfit(product.sellingPrice, product.buyingPrice).toLocaleString('id-ID')}</span>
               </div>
               <div className="pt-2 flex justify-between gap-1">
                 <button
