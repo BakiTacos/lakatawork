@@ -10,14 +10,14 @@ interface Product {
   id: string;
   productId: string;
   productName: string;
-  buyingPrice: number;
+  sellingPrice: number;
   supplier: string;
 }
 
 interface TransactionItem {
   productId: string;
   productName: string;
-  buyingPrice: number;
+  sellingPrice: number;
   supplierName: string;
   quantity: number;
 }
@@ -66,7 +66,7 @@ export default function Purchase() {
         id: doc.id,
         productId: doc.data().productId,
         productName: doc.data().productName,
-        buyingPrice: doc.data().buyingPrice || 0,
+        sellingPrice: doc.data().sellingPrice || 0,
         supplier: doc.data().supplier
       }));
       setProducts(productsData);
@@ -96,7 +96,7 @@ export default function Purchase() {
       setSelectedProducts([...selectedProducts, {
         productId: selectedProduct.productId,
         productName: selectedProduct.productName,
-        buyingPrice: selectedProduct.buyingPrice,
+        sellingPrice: selectedProduct.sellingPrice,
         supplierName: selectedProduct.supplier,
         quantity: confirmQuantity
       }]);
@@ -149,7 +149,7 @@ export default function Purchase() {
         type: 'purchase',
         date: new Date(),
         items: selectedProducts,
-        total: selectedProducts.reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0).toFixed(2)
+        total: selectedProducts.reduce((sum, item) => sum + (item.sellingPrice * item.quantity), 0).toFixed(2)
       });
 
       setSavedTransactionId(docRef.id);
@@ -224,7 +224,7 @@ export default function Purchase() {
                       <tr key={index} className="hover:bg-black/[.02] dark:hover:bg-white/[.02]">
                         <td className="px-4 py-2">{item.productName}</td>
                         <td className="px-4 py-2">{item.supplierName}</td>
-                        <td className="px-4 py-2 text-right">Rp {item.buyingPrice.toLocaleString()}</td>
+                        <td className="px-4 py-2 text-right">Rp {item.sellingPrice.toLocaleString()}</td>
                         <td className="px-4 py-2 text-right">
                           <input
                             type="number"
@@ -234,7 +234,7 @@ export default function Purchase() {
                             min="1"
                           />
                         </td>
-                        <td className="px-4 py-2 text-right">Rp {(item.buyingPrice * item.quantity).toLocaleString()}</td>
+                        <td className="px-4 py-2 text-right">Rp {(item.sellingPrice * item.quantity).toLocaleString()}</td>
                         <td className="px-4 py-2 text-center">
                           <button
                             onClick={() => removeFromTransaction(item.productId)}
@@ -250,7 +250,7 @@ export default function Purchase() {
                     <tr className="font-semibold">
                       <td colSpan={4} className="px-4 py-2 text-right">Total:</td>
                       <td className="px-4 py-2 text-right">
-                        Rp {selectedProducts.reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0).toLocaleString()}
+                        Rp {selectedProducts.reduce((sum, item) => sum + (item.sellingPrice * item.quantity), 0).toLocaleString()}
                       </td>
                     </tr>
                   </tfoot>
@@ -295,7 +295,7 @@ export default function Purchase() {
                       <tr key={index} className="hover:bg-black/[.02] dark:hover:bg-white/[.02]">
                         <td className="px-4 py-2">{item.productName}</td>
                         <td className="px-4 py-2">{item.supplierName}</td>
-                        <td className="px-4 py-2 text-right">Rp {item.buyingPrice.toLocaleString()}</td>
+                        <td className="px-4 py-2 text-right">Rp {item.sellingPrice.toLocaleString()}</td>
                         <td className="px-4 py-2 text-right">
                           <input
                             type="number"
@@ -305,7 +305,7 @@ export default function Purchase() {
                             min="1"
                           />
                         </td>
-                        <td className="px-4 py-2 text-right">Rp {(item.buyingPrice * item.quantity).toLocaleString()}</td>
+                        <td className="px-4 py-2 text-right">Rp {(item.sellingPrice * item.quantity).toLocaleString()}</td>
                         <td className="px-4 py-2 text-center">
                           <button
                             onClick={() => removeFromTransaction(item.productId)}
@@ -321,7 +321,7 @@ export default function Purchase() {
                     <tr className="font-semibold">
                       <td colSpan={4} className="px-4 py-2 text-right">Total:</td>
                       <td className="px-4 py-2 text-right">
-                        Rp {selectedProducts.reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0).toLocaleString()}
+                        Rp {selectedProducts.reduce((sum, item) => sum + (item.sellingPrice * item.quantity), 0).toLocaleString()}
                       </td>
                     </tr>
                   </tfoot>
@@ -349,7 +349,7 @@ export default function Purchase() {
               <h3 className="text-lg font-semibold mb-4">Confirm Product</h3>
               <div className="mb-4">
                 <p className="mb-2">Product: {selectedProduct.productName}</p>
-                <p className="mb-4">Price: Rp {selectedProduct.buyingPrice.toLocaleString()}</p>
+                <p className="mb-4">Price: Rp {selectedProduct.sellingPrice.toLocaleString()}</p>
                 <label className="block text-sm font-medium mb-2">Quantity:</label>
                 <input
                   type="number"
@@ -380,7 +380,7 @@ export default function Purchase() {
         {selectedProducts.length > 0 && (
           <div className="fixed bottom-0 left-0 right-0 bg-background p-4 border-t border-black/[.08] dark:border-white/[.12] flex justify-between items-center">
             <div className="text-lg font-semibold">
-              Total: Rp {selectedProducts.reduce((sum, item) => sum + (item.buyingPrice * item.quantity), 0).toLocaleString()}
+              Total: Rp {selectedProducts.reduce((sum, item) => sum + (item.sellingPrice * item.quantity), 0).toLocaleString()}
             </div>
             <div className="flex gap-2">
               <button
@@ -436,7 +436,7 @@ export default function Purchase() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm text-foreground/70">{product.supplier}</p>
-                  <p className="text-base font-medium text-foreground">Rp {product.buyingPrice.toLocaleString()}</p>
+                  <p className="text-base font-medium text-foreground">Rp {product.sellingPrice.toLocaleString()}</p>
                   <button
                     onClick={() => showAddConfirmation(product)}
                     className="w-full px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200"
